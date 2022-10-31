@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="ER">
+    <link href="{{ url_for('static', filename='styles/css/style.scss.css') }}" rel="stylesheet" type="text/css">
+    <script src="{{url_for('static', filename='js/utilities.js')}}"></script>
+    {% if title %}
+    <title>{{ title }} - Strava Api</title>
+    {% else %}
+    <title>Strava Api</title>
+    {% endif %}
+</head>
+<body>
+    <div class="container">
+        <div>
+            {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>
+        <div class="notification is-success">
+            <button class="delete"></button>
+           <strong>{{ message }}</strong>
+          </div>
+        </li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+        </div>
+        <div class="section">
+                   {% block content %}
+
+                    {% endblock %}
+        </div>
+    </div>
+</body>
+</html>
