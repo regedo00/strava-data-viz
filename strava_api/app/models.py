@@ -13,7 +13,16 @@ class Activity(db.Model):
     start_date = db.Column(db.DateTime)
     average_speed = db.Column(db.Float)
     max_speed = db.Column(db.Float)
-    strava_id = db.Column(db.Integer)
 
     def __repr__(self):
         return "<Activity {} {}>".format(self.name, self.type)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "distance": self.distance,
+            "type": self.type,
+            "start_date": self.start_date,
+            "average_speed": self.average_speed,
+        }

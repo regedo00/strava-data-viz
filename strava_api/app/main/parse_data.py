@@ -60,6 +60,7 @@ def parse_strava_data(input):
         data["moving_time"] = (data["moving_time"] / 60).round(2)
         data["average_speed"] = (data["average_speed"] * 3.6).round(2)
         data["distance"] = (data["distance"] / 1000).astype(float).round(2)
+        flash(f"Data imported - {len(data.index)} activities", "success")
 
     except KeyError:
         flash("Data are up to date", "success")

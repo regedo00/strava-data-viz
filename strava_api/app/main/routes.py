@@ -14,7 +14,7 @@ from app.main import bp
 from app.main.api_call import get_data, check_if_data
 
 from app.main.forms import EmptyForm
-from app.main.plot import create_bar_chart
+from app.main.plot import create_activities_bar_chart
 
 
 @bp.route("/")
@@ -22,30 +22,12 @@ from app.main.plot import create_bar_chart
 def index():
     check_if_data()
     form = EmptyForm()
-    page = request.args.get("page", 1, type=int)
-    activities = Activity.query.order_by(Activity.id.desc()).paginate(
-        page=page, per_page=current_app.config["ACTIVITIES_PER_PAGE"], error_out=False
-    )
-    next_url = (
-        url_for("main.index", page=activities.next_num) if activities.has_next else None
-    )
-    prev_url = (
-        url_for("main.index", page=activities.prev_num) if activities.has_prev else None
-    )
-
-    km = round((db.session.query(func.sum(Activity.distance)).scalar() / 1000))
-    total_distance = "{} km".format(km)
-
     return render_template(
         "index.html",
         title="Home",
         page="index",
         form=form,
-        activities=activities.items,
-        next_url=next_url,
-        prev_url=prev_url,
-        total_distance=total_distance,
-        graphJSON=create_bar_chart(),
+        graphJSON=create_activities_bar_chart(),
     )
 
 
@@ -59,3 +41,45 @@ def retrieve():
         return redirect(url_for("main.index"))
     else:
         return redirect(url_for("main.index"))
+
+@bp.route('/show-table')
+def data():
+    query = Activity.query
+
+    search = request.args.get('search[value]')
+    if search:
+        query = query.filter(db.or_(
+            Activity.name.like(f'%{search}%'),
+            Activity.type.like(f'%{search}%')
+        ))
+
+    total_filtered = query.count()
+
+    order = []
+    i = 0
+    while True:
+        col_index = request.args.get(f'order[{i}][column]')
+        if col_index is None:
+            break
+        col_name = request.args.get(f'columns[{col_index}][data]')
+        if col_name not in ['distance', 'start_date', 'average_speed']:
+            col_name = 'distance'
+        descending = request.args.get(f'order[{i}][dir]') == 'desc'
+        col = getattr(Activity, col_name)
+        if descending:
+            col = col.desc()
+        order.append(col)
+        i += 1
+    if order:
+        query = query.order_by(*order)
+
+    start = request.args.get('start', type=int)
+    length = request.args.get('length', type=int)
+    query = query.offset(start).limit(length)
+
+    return {
+        'data': [activity.to_dict() for activity in query],
+        'recordsFiltered': total_filtered,
+        'recordsTotal': Activity.query.count(),
+        'draw': request.args.get('draw', type=int),
+    }

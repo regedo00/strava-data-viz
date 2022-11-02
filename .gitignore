@@ -4,6 +4,7 @@
 /strava_api/logs
 /strava_api/migrations
 /strava_api/app/static/styles/css/*
+/strava_api/app/main/routes_old.py
 
 .ipynb_checkpoints
 

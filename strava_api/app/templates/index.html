@@ -1,59 +1,39 @@
 {% extends "base.html" %}
-
 {% block content %}
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<div>
-            <form action="{{ url_for('main.retrieve') }}" method="post">
+<div class="pb-5">
+    <form action="{{ url_for('main.retrieve') }}" method="post">
                 {{ form.hidden_tag() }}
-                {{ form.submit(value='Retrieve data',class="btn btn-outline-dark btn-lg btn-block btn-sm") }}
+                {{ form.submit(value='Retrieve data',class="button is-primary is-pulled-right") }}
             </form>
         </div>
-        <hr>
         <div>
-        <table class="table is-hoverable is-narrow">
-            <thead>
-              <tr>
-                <th><abbr title="Id">Strava ID</abbr></th>
-                <th><abbr title="Date">Date</abbr></th>
-                <th><abbr title="Name">Activity</abbr></th>
-                <th><abbr title="Type">Type</abbr></th>
-                <th><abbr title="Distance">Distance</abbr></th>
-                <th><abbr title="Moving_time">Moving time</abbr></th>
-                <th><abbr title="Avg_speed">Avg speed (km/h)</abbr></th
-              </tr>
-            </thead>
-            <tbody>
-                {% for activity in activities %}
-                <tr>
-                  <th>{{ activity.id }}</th>
-                  <td>{{ activity.start_date }}</td>
-                  <td>{{ activity.name }}</td>
-                  <td>{{ activity.type}} </td>
-                  <td>{{ activity.distance }}</td>
-                  <td>{{ activity.moving_time }}</td>
-                  <td>{{ activity.average_speed }}</td>
-                </tr>
-                {% endfor %}
-                </tbody>
-                </table>
-                <nav class="pagination is-small" role="navigation" aria-label="pagination">
-                    {% if prev_url %}
-                    <a href="{{ prev_url }}" class="pagination-previous">Previous</a>
-                    {% endif %}
-                    {% if next_url %}
-                    <a href="{{ next_url }}" class="pagination-next">Next page</a>
-                    {% endif %}
-                  </nav>
-        </div>
-        <hr>
-        <div>
-            Total distance = {{ total_distance }}
-        </div>
+        <table id="activity-table" class="table is-striped is-hoverable is-fullwidth">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Name</th>
+              <th>Distance</th>
+              <th>Type</th>
+              <th>Date</th>
+              <th>Average Speed</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
         <hr>
         <div>
             {% include '_barchart.html' %}
         </div>
-        
-
 {% endblock %}
+{% block scripts %}
+<script type="text/javascript" charset="utf8" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/dataTables.bulma.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.bulma.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.colVis.min.js"></script>
+<script src="{{url_for('static', filename='js/utilities.js')}}"></script>
+<script src="{{url_for('static', filename='js/datatable.js')}}"></script>
+{% endblock %}
+

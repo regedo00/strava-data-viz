@@ -6,7 +6,7 @@
     <meta name="description" content="">
     <meta name="author" content="ER">
     <link href="{{ url_for('static', filename='styles/css/style.scss.css') }}" rel="stylesheet" type="text/css">
-    <script src="{{url_for('static', filename='js/utilities.js')}}"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     {% if title %}
     <title>{{ title }} - Strava Api</title>
     {% else %}
@@ -37,5 +37,6 @@
                     {% endblock %}
         </div>
     </div>
+    {% block scripts %}{% endblock %}
 </body>
 </html>

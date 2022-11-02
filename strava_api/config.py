@@ -3,21 +3,21 @@ from dotenv import load_dotenv
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-db_path = os.path.join(os.path.dirname(__file__), "database/app.db")
 load_dotenv(os.path.join(basedir, ".env"))
 
 
 class Config(object):
 
-    #Flask
+    # Flask
     SECRET_KEY = os.urandom(12)
     SECURITY_PASSWORD_SALT = os.urandom(12)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     FLASK_ADMIN_FLUID_LAYOUT = True
     STATIC_FOLDER = f"{os.getenv('APP_FOLDER')}/app/static"
-    SQLALCHEMY_DATABASE_URI = "sqlite:///{}".format(db_path)
-
-    #Mail
+    SQLALCHEMY_DATABASE_URI = os.environ.get(
+        "DATABASE_URL"
+    ) or "sqlite:///" + os.path.join(basedir, "app.db")
+    # Mail
     MAIL_SERVER = os.environ.get("MAIL_SERVER")
     MAIL_PORT = os.environ.get("MAIL_PORT")
     MAIL_USE_TLS = os.environ.get("MAIL_USE_TLS")
@@ -26,7 +26,7 @@ class Config(object):
     MAIL_DEFAULT_SENDER = os.environ.get("MAIL_DEFAULT_SENDER")
     ADMINS = os.environ.get("ADMINS")
 
-    #Strava
+    # Strava
     AUTH_URL = "https://www.strava.com/oauth/token"
     ACTIVITIES_URL = "https://www.strava.com/api/v3/athlete/activities"
     STRAVA_CLIENT_ID = os.environ.get("STRAVA_CLIENT_ID")
