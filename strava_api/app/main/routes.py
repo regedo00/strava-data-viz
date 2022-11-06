@@ -14,7 +14,7 @@ from app.main import bp
 from app.main.api_call import get_data, check_if_data
 
 from app.main.forms import EmptyForm
-from app.main.plot import all_activities, run_activities
+from app.main.plot import check_sports, all_activities, single_activity
 
 
 @bp.route("/")
@@ -22,15 +22,26 @@ from app.main.plot import all_activities, run_activities
 def index():
     check_if_data()
     form = EmptyForm()
+    plots = check_sports()
     all = all_activities()
-    run = run_activities()
     return render_template(
         "index.html",
         title="Home",
         page="index",
         form=form,
+        plots=plots,
         all_graphJSON=all.plots,
-        run_graphJSON=run.plots,
+    )
+
+
+@bp.route("/activity/<name>")
+def activity(name):
+    form = EmptyForm()
+    activity = single_activity(name)
+    plots = check_sports()
+
+    return render_template(
+        "activity_page.html", form=form, graphJSON=activity.plots, plots=plots
     )
 
 

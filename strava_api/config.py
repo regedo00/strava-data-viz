@@ -17,6 +17,7 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         "DATABASE_URL"
     ) or "sqlite:///" + os.path.join(basedir, "app.db")
+
     # Mail
     MAIL_SERVER = os.environ.get("MAIL_SERVER")
     MAIL_PORT = os.environ.get("MAIL_PORT")
@@ -32,5 +33,6 @@ class Config(object):
     STRAVA_CLIENT_ID = os.environ.get("STRAVA_CLIENT_ID")
     STRAVA_CLIENT_SECRET = os.environ.get("STRAVA_CLIENT_SECRET")
     STRAVA_REFRESH_TOKEN = os.environ.get("STRAVA_REFRESH_TOKEN")
+    PLOTS = ["All", "Run", "Ride", "Hike"]
     RECORD_PER_PAGE = 200
     ACTIVITIES_PER_PAGE = 10

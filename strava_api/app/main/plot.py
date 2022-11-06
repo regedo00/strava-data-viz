@@ -1,3 +1,4 @@
+from flask import current_app
 from sqlalchemy.sql import text
 import pandas as pd
 import plotly
@@ -17,6 +18,18 @@ def db_data_into_df():
         activity_df["start_date"] = pd.to_datetime(activity_df["start_date"])
 
     return activity_df
+
+
+def check_sports():
+    df = db_data_into_df()
+    check = []
+    for sport in df["type"].unique():
+        check.append(sport)
+    plots = current_app.config["PLOTS"][1:]
+    sc = set(check)
+    sp = set(plots)
+    plots = list(sp.intersection(sc))
+    return plots
 
 
 class all_activities:
@@ -144,27 +157,53 @@ class all_activities:
         return self.graphJSON
 
 
-class run_activities:
-    def __init__(self):
+class single_activity:
+    def __init__(self, activity_name):
+        self.name = activity_name
         self.data = db_data_into_df()
-        self.plots = self.create_run_pace_chart()
+        self.plots = self.create_activity_chart()
 
-    def create_run_pace_chart(self):
-        self.pace_df = self.data[["start_date", "type", "average_speed"]]
-        self.pace_df["start_date"] = pd.to_datetime(self.pace_df["start_date"])
-        self.pace_df = self.pace_df[self.pace_df["type"] == "Run"]
+    def create_activity_chart(self):
+        self.activity_df = self.data[
+            ["start_date", "type", "average_speed", "distance"]
+        ]
+        self.activity_df["start_date"] = pd.to_datetime(self.activity_df["start_date"])
+        self.activity_df = self.activity_df[self.activity_df["type"] == self.name]
 
         self.fig1 = go.Figure()
         self.fig1.add_trace(
             go.Scatter(
                 name="Pace",
-                x=self.pace_df.start_date,
-                y=self.pace_df.average_speed,
+                x=self.activity_df.start_date,
+                y=self.activity_df.average_speed,
                 mode="markers+lines",
             )
         )
         self.fig1.update_xaxes(rangeslider_visible=True)
 
         self.pace_graphJSON = json.dumps(self.fig1, cls=plotly.utils.PlotlyJSONEncoder)
-        self.graphJSON = [self.pace_graphJSON]
+
+        self.activity_df_yearly = self.activity_df.groupby(
+            [self.activity_df.start_date.dt.year, self.activity_df.type]
+        ).sum()
+        self.activity_df_yearly = self.activity_df_yearly.reset_index(level=[0, 1])
+
+        self.fig2 = go.Figure()
+
+        self.fig2.add_trace(
+            go.Bar(
+                name=self.name,
+                x=self.activity_df_yearly.start_date,
+                y=self.activity_df_yearly.distance,
+                visible=True,
+            )
+        )
+
+        self.fig2.update_xaxes(rangeslider_visible=True)
+
+        self.distance_graphJSON = json.dumps(
+            self.fig2, cls=plotly.utils.PlotlyJSONEncoder
+        )
+
+        self.graphJSON = [self.pace_graphJSON, self.distance_graphJSON]
         return self.graphJSON

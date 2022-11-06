@@ -1,5 +1,7 @@
 <div id='pace-chart' class='chart'”></div>
 <script type='text/javascript'>
-    var graphs = {{ run_graphJSON[0] | safe}};
-    Plotly.plot('pace-chart',graphs,{});
+    var graphs = {{ graphJSON[0] | safe}};
+    var layout = {autosize: true};
+    var config = {responsive: true};
+    Plotly.plot('pace-chart',graphs,layout,config);
   </script>

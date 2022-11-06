@@ -1,29 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="pb-5">
-    <form action="{{ url_for('main.retrieve') }}" method="post">
-                {{ form.hidden_tag() }}
-                {{ form.submit(value='Retrieve data',class="button is-primary is-pulled-right") }}
-            </form>
+<div class="columns is-mobile">
+  <div class="column">
+    <div>
+      {% include "_all_activities_barchart.html" %}
+    </div>
+    <hr>
+            <div>
+            {% include '_activity_table.html' %}
+          </div>
         </div>
-        <div>
-        <table id="activity-table" class="table is-striped is-hoverable is-fullwidth">
-          <thead>
-            <tr>
-              <th>Id</th>
-              <th>Name</th>
-              <th>Distance</th>
-              <th>Type</th>
-              <th>Date</th>
-              <th>Average Speed</th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
-        <hr>
-        <div>
-            {% include '_barchart.html' %}
         </div>
 {% endblock %}
 {% block scripts %}
@@ -33,6 +19,8 @@
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.bulma.min.js"></script>
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.colVis.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.3.0/js/dataTables.responsive.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.3.0/js/responsive.bulma.min.js"></script>
 <script src="{{url_for('static', filename='js/utilities.js')}}"></script>
 <script src="{{url_for('static', filename='js/datatable.js')}}"></script>
 {% endblock %}
