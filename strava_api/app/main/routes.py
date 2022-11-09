@@ -26,7 +26,7 @@ def index():
     all = all_activities()
     return render_template(
         "index.html",
-        title="Home",
+        title="All activities",
         page="index",
         form=form,
         plots=plots,

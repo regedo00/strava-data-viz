@@ -2,9 +2,10 @@ from flask import current_app
 from sqlalchemy.sql import text
 import pandas as pd
 import plotly
-import plotly.express as px
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 import json
+import datetime
 
 
 from app import db
@@ -38,7 +39,7 @@ class all_activities:
         self.plots = self.create_all_activities_chart()
 
     def create_all_activities_chart(self):
-        self.plottable = self.data[["start_date", "distance", "type"]]
+        self.plottable = self.data[["start_date", "distance", "type", "average_speed"]]
         self.plottable_yearly = self.plottable.groupby(
             [self.plottable.start_date.dt.year, self.plottable.type]
         ).sum()
@@ -153,7 +154,55 @@ class all_activities:
             self.fig, cls=plotly.utils.PlotlyJSONEncoder
         )
 
-        self.graphJSON = [self.distance_graphJSON]
+        today = datetime.datetime.now()
+        year = today.year
+        self.this_year_df = self.plottable.copy()
+        self.this_year_df["start_date"] = pd.to_datetime(
+            self.this_year_df["start_date"]
+        )
+        self.this_year_df = self.this_year_df[
+            self.this_year_df["start_date"].dt.year == year
+        ]
+        self.this_year_sum = self.this_year_df.groupby("type").sum()
+        self.this_year_avg = self.this_year_df.groupby("type").mean()
+
+        self.fig1 = make_subplots(
+            rows=1, cols=2, specs=[[{"type": "domain"}, {"type": "domain"}]]
+        )
+        self.fig1.add_trace(
+            go.Pie(
+                labels=self.this_year_sum.index,
+                values=self.this_year_sum.distance,
+                name="Distance",
+            ),
+            1,
+            1,
+        )
+        self.fig1.add_trace(
+            go.Pie(
+                labels=self.this_year_avg.index,
+                values=self.this_year_avg.average_speed.round(2),
+                name="Avg Speed",
+            ),
+            1,
+            2,
+        )
+
+        self.fig1.update_traces(hole=0.4, textinfo="label+value")
+
+        self.fig1.update_layout(
+            title_text=f"{year} data",
+            annotations=[
+                dict(text="Distance", x=0.19, y=0.5, font_size=15, showarrow=False),
+                dict(text=" Avg Speed", x=0.81, y=0.5, font_size=15, showarrow=False),
+            ],
+        )
+
+        self.current_year_graphJSON = json.dumps(
+            self.fig1, cls=plotly.utils.PlotlyJSONEncoder
+        )
+
+        self.graphJSON = [self.distance_graphJSON, self.current_year_graphJSON]
         return self.graphJSON
 
 
@@ -176,7 +225,7 @@ class single_activity:
                 name="Pace",
                 x=self.activity_df.start_date,
                 y=self.activity_df.average_speed,
-                mode="markers+lines",
+                mode="markers",
             )
         )
         self.fig1.update_xaxes(rangeslider_visible=True)

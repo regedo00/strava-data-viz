@@ -1,0 +1,7 @@
+<div id="pie-chart" class="chart"></div>
+<script type="text/javascript">
+    var graphs = {{ all_graphJSON[1] | safe }};
+    var layout = {autosize: true};
+    var config = {responsive: true};
+    Plotly.newPlot('pie-chart',graphs,layout, config);
+  </script>
