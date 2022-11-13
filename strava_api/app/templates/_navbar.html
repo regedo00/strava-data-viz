@@ -1,26 +1,32 @@
-<nav class="navbar is-transparent pt-5">
-    <div class="navbar-brand">
-      <a class="navbar-item" href="{{ url_for('main.index') }}"><h2><b>NAME HERE</b></h2></a>
-    </div>
-      <div class="navbar-start">  
-          </div>
-      <div class="navbar-end">
-        {% for plot in plots %}
-            <div class="navbar-item">
-                <a href="{{ url_for('main.activity', name= plot) }}">
-                {{ plot }}
-            </a>
-            </div>
-              {% endfor %}
-        <div class="navbar-item">
-          <div class="field is-grouped">
-            <p class="control">
-              <form action="{{ url_for('main.retrieve') }}" method="post">
-                {{ form.hidden_tag() }}
-                {{ form.submit(value='Retrieve data',class="button is-primary is-pulled-right") }}
-            </form>
-            </p>
-          </div>
-        </div>
+<nav class="navbar px-5 py-3" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <div class="navbar-item">
+      <form action="{{ url_for('main.retrieve') }}" method="post">
+        {{ form.hidden_tag() }}
+        {{ form.submit(value='Retrieve data',class="button btn-custom") }}
+    </form>
+  </div> 
+  </div>
+  <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+    <span aria-hidden="true"></span>
+  </a>
+  <div class="navbar-menu" id="navMenu">
+    <div class="navbar-end">
+      <div class="navbar-item">
+        <a href="{{ url_for('main.index') }}">Home</a>
       </div>
+      <div class="navbar-item">
+        <p><b>|</b></p>
+      </div>
+      {% for plot in plots %}
+          <div class="navbar-item">
+              <a href="{{ url_for('main.activity', name= plot) }}">
+              {{ plot }}
+          </a>
+          </div>
+            {% endfor %}
+    </div>
+  </div>
 </nav>

@@ -7,6 +7,8 @@ from flask import (
 )
 from sqlalchemy import func
 import calendar
+import datetime
+
 
 from app import db
 from app.models import Activity
@@ -24,12 +26,15 @@ def index():
     form = EmptyForm()
     plots = check_sports()
     all = all_activities()
+    today = datetime.datetime.now()
+    year = today.year
     return render_template(
         "index.html",
         title="All activities",
         page="index",
         form=form,
         plots=plots,
+        this_year = year,
         all_graphJSON=all.plots,
     )
 

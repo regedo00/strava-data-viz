@@ -34,5 +34,16 @@ class Config(object):
     STRAVA_CLIENT_SECRET = os.environ.get("STRAVA_CLIENT_SECRET")
     STRAVA_REFRESH_TOKEN = os.environ.get("STRAVA_REFRESH_TOKEN")
     PLOTS = ["All", "Run", "Ride", "Hike"]
+    COLORS = [
+        "#fd7f6f",
+        "#7eb0d5",
+        "#b2e061",
+        "#bd7ebe",
+        "#ffb55a",
+        "#ffee65",
+        "#beb9db",
+        "#fdcce5",
+        "#8bd3c7",
+    ]
     RECORD_PER_PAGE = 200
     ACTIVITIES_PER_PAGE = 10

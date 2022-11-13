@@ -33,9 +33,17 @@ def check_sports():
     return plots
 
 
+def create_color_palette():
+    colors = current_app.config["COLORS"]
+    sports = check_sports()
+    palette = {sports[i]: colors[i] for i in range(len(sports))}
+    return palette
+
+
 class all_activities:
     def __init__(self):
         self.data = db_data_into_df()
+        self.palette = create_color_palette()
         self.plots = self.create_all_activities_chart()
 
     def create_all_activities_chart(self):
@@ -56,7 +64,9 @@ class all_activities:
 
         self.fig = go.Figure()
 
-        for sport in self.plottable_yearly["type"].unique():
+        for sport, color in zip(
+            self.plottable_yearly["type"].unique(), current_app.config["COLORS"]
+        ):
             sport_serie = self.plottable_yearly[self.plottable_yearly["type"] == sport]
             self.fig.add_trace(
                 go.Bar(
@@ -64,10 +74,13 @@ class all_activities:
                     x=sport_serie.start_date,
                     y=sport_serie.distance,
                     visible=True,
+                    marker_color=color,
                 )
             )
 
-        for sport in self.plottable_monthly["type"].unique():
+        for sport, color in zip(
+            self.plottable_monthly["type"].unique(), current_app.config["COLORS"]
+        ):
             sport_serie_m = self.plottable_monthly[
                 self.plottable_monthly["type"] == sport
             ]
@@ -77,6 +90,7 @@ class all_activities:
                     x=sport_serie_m.index,
                     y=sport_serie_m.distance,
                     visible=False,
+                    marker_color=color,
                 )
             )
 
@@ -86,8 +100,8 @@ class all_activities:
                     type="buttons",
                     direction="right",
                     active=0,
-                    x=0.7,
-                    y=1.5,
+                    x=0.4,
+                    y=1.3,
                     buttons=list(
                         [
                             dict(
@@ -146,7 +160,12 @@ class all_activities:
             ]
         )
 
-        self.fig.update_layout(barmode="stack",)
+        self.fig.update_layout(
+            barmode="stack",
+            legend=dict(
+                orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1
+            ),
+        )
 
         self.fig.update_xaxes(rangeslider_visible=True)
 
@@ -164,7 +183,7 @@ class all_activities:
             self.this_year_df["start_date"].dt.year == year
         ]
         self.this_year_sum = self.this_year_df.groupby("type").sum()
-        self.this_year_avg = self.this_year_df.groupby("type").mean()
+        self.this_year_count = self.this_year_df.groupby("type").count()
 
         self.fig1 = make_subplots(
             rows=1, cols=2, specs=[[{"type": "domain"}, {"type": "domain"}]]
@@ -174,15 +193,16 @@ class all_activities:
                 labels=self.this_year_sum.index,
                 values=self.this_year_sum.distance,
                 name="Distance",
+                marker_colors=self.this_year_sum.index.map(self.palette),
             ),
             1,
             1,
         )
         self.fig1.add_trace(
             go.Pie(
-                labels=self.this_year_avg.index,
-                values=self.this_year_avg.average_speed.round(2),
-                name="Avg Speed",
+                labels=self.this_year_count.index,
+                values=self.this_year_count.average_speed.round(2),
+                name="Activities",
             ),
             1,
             2,
@@ -191,10 +211,12 @@ class all_activities:
         self.fig1.update_traces(hole=0.4, textinfo="label+value")
 
         self.fig1.update_layout(
-            title_text=f"{year} data",
+            legend=dict(
+                orientation="h", yanchor="bottom", y=1.1, xanchor="right", x=0.6
+            ),
             annotations=[
                 dict(text="Distance", x=0.19, y=0.5, font_size=15, showarrow=False),
-                dict(text=" Avg Speed", x=0.81, y=0.5, font_size=15, showarrow=False),
+                dict(text="Activities", x=0.81, y=0.5, font_size=15, showarrow=False),
             ],
         )
 

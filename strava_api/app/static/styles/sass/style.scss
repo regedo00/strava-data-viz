@@ -2,9 +2,98 @@
 @import "https://cdn.datatables.net/1.12.1/css/dataTables.bulma.min.css";
 @import "https://cdn.datatables.net/buttons/2.2.3/css/buttons.bulma.min.css";
 @import "https://cdn.datatables.net/responsive/2.3.0/css/responsive.bulma.min.css";
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;0,1000;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900;1,1000&display=swap');
 
+$font-family: 'Nunito', sans-serif;
+$base-font-size: 18px;
+$base-line-height: 1.5rem;
+
+
+$font-color: #242428;
+$light-color: #fff;
+$medium-color: #817f7f;
+$secondary-color: #FC5200;
+$h1: 2rem;
+$h2: 1.5rem;
+$h3: 1rem;
+
+html {
+    background-color: $secondary-color;
+    font-family: $font-family;
+    font-size: $base-font-size;
+    line-height: $base-line-height;
+}
+
+.container {
+    background-color: $light-color;
+}
 
 .navbar {
     padding-bottom: 1rem;
-    border-bottom: 1px solid rgb(62, 62, 62);
+    border-bottom: 3px solid $font-color;
+}
+
+.navbar .navbar-item a {
+    color: $font-color;
+    font-weight: 600;
+}
+
+.navbar .navbar-item a:hover {
+    color: $secondary-color;
+    text-decoration: underline;
+}
+
+.navbar-title {
+    font-size: $h2;
+}
+
+.navbar-title a {
+    color: $font-color;
+    text-decoration: none;
+}
+
+.navbar-title:hover {
+    color: $secondary-color;
+    text-decoration: underline;
+
+}
+
+.btn-custom {
+    border-radius: 0px;
+    background-color: $light-color;
+    border: 5px solid $secondary-color;
+    box-shadow: 10px 5px $medium-color;
+
+}
+
+.btn-custom a {
+    font-weight: 400;
+}
+
+.btn-custom:hover {
+    color: $light-color;
+    background-color: $secondary-color;
+    border: 5px solid $secondary-color;
+}
+
+.main-col {
+    border-left: 3px solid $font-color;
+    border-right: 3px solid $font-color;
+
+}
+
+h1 {
+    font-size: $h1;
+}
+
+.section-titles {
+    background-color: $font-color;
+    font-size: $h2;
+    color: $light-color;
+    display: block;
+}
+
+.plot-box {
+    border: 2px solid $font-color;
+    box-shadow: 10px 7px $medium-color;
 }

@@ -2,16 +2,29 @@
 {% block content %}
 <div class="columns is-mobile">
   <div class="column">
-    <div>
-      {% include "_all_activities_piechart.html" %}
+    <div class="p-5 m-5">
+      <div class="has-text-centered ">
+        <p class="section-titles"><b>{{ this_year }}</b> results </p>
+      </div>
+        <div class="plot-box">
+        {% include "_all_activities_piechart.html" %}
+      </div>
     </div>
-    <hr>
-    <div>
+    <div class="p-5 m-5">
+      <div class="has-text-centered	section-titles">
+        <p>Distance</p>
+      </div>
+      <div class="plot-box">
       {% include "_all_activities_barchart.html" %}
     </div>
-    <hr>
-            <div>
+    </div>
+            <div class="p-5 m-5">
+              <div class="has-text-centered	section-titles">
+                <p>All activities</p>
+              </div>
+              <div class="plot-box p-5">
             {% include '_activity_table.html' %}
+          </div>
           </div>
         </div>
         </div>
