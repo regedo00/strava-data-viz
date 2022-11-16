@@ -15,22 +15,57 @@
 </head>
 <body>
     <div class="container main-col">
+      {% if navbar %}
       {% include '_navbar.html' %}
+      {% endif %}
         <div>
-            {% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul class=flashes>
-    {% for message in messages %}
-      <li>
-        <div class="notification is-success">
-            <button class="delete"></button>
-           <strong>{{ message }}</strong>
-          </div>
-        </li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
+          {% with messages = get_flashed_messages(category_filter=["success"]) %}
+                    {% if messages %}
+                        <ul class="flashes">
+                            {% for message in messages %}
+                            <li>
+                              <div class="notification is-success is-light">
+                                  <button class="delete"></button>
+                                 <strong>{{ message }}</strong>
+                                </div>
+                              </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {% endwith %}
+                    {% with messages = get_flashed_messages(category_filter=["error"]) %}
+                    {% if messages %}
+                    <div class="main-alert">
+                        <ul>
+                            {% for message in messages %}
+                            <li>
+                              <div class="notification is-danger is-light">
+                                  <button class="delete"></button>
+                                 <strong>{{ message }}</strong>
+                                </div>
+                              </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                    {% endwith %}
+                    {% with messages = get_flashed_messages(category_filter=["info"]) %}
+                    {% if messages %}
+                    <div class="main-alert">
+                        <ul>
+                            {% for message in messages %}
+                            <li>
+                              <div class="notification is-info is-light">
+                                  <button class="delete"></button>
+                                 <strong>{{ message }}</strong>
+                                </div>
+                              </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                    {% endwith %}
+
         </div>
         {% block content %}
 

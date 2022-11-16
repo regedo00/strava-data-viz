@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="columns is-mobile">
+    <div class="column">
+        <section class="hero is-fullheight">
+            <div class="hero-body has-text-centered">
+              <div class="container">
+                <div class="box">
+                    <h1 class="pb-4"><b>Insert your credentials</b></h1>
+                    <form action="" method="post">
+                        {{ form.hidden_tag() }}
+                        <div class="pb-4 input-div">
+                            {{ form.name(size=32, class="input is-normal") }}<br>
+                            {% for error in form.name.errors %}
+                            <div class="notification is-danger is-light" role="alert">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="pb-4 input-div">
+                            {{ form.client_id(size=32, class="input is-normal") }}<br>
+                            {% for error in form.client_id.errors %}
+                            <div class="notification is-danger is-light" role="alert">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="pb-4 input-div">
+                            {{ form.client_secret(class="input is-normal") }}<br>
+                            {% for error in form.client_secret.errors %}
+                            <div class="notification is-danger is-light" role="alert">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="pb-4 input-div">
+                            {{ form.refresh_token(class="input is-normal") }}<br>
+                            {% for error in form.refresh_token.errors %}
+                            <div class="notification is-danger is-light" role="alert">{{ error }}</div>
+                            {% endfor %}
+                            
+                        </div>
+                        <p>{{ form.submit(class="button btn-custom") }}</p>
+                    </form>
+                </div>
+              </div>
+            </div>
+          </section>
+    </div>
+</div>
+{% endblock %}

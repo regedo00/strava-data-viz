@@ -1,42 +1,75 @@
-from flask import (
-    render_template,
-    url_for,
-    request,
-    current_app,
-    redirect,
-)
-from sqlalchemy import func
+from flask import render_template, url_for, request, redirect, flash
 import calendar
 import datetime
 
 
 from app import db
-from app.models import Activity
+from app.models import Access, Activity
 from app.main import bp
 from app.main.api_call import get_data, check_if_data
 
-from app.main.forms import EmptyForm
+from app.main.forms import EmptyForm, EditCredentialsForm
 from app.main.plot import check_sports, all_activities, single_activity
 
 
 @bp.route("/")
 @bp.route("/index")
 def index():
-    check_if_data()
-    form = EmptyForm()
+    if db.session.query(Access).first():
+        check_if_data()
+        form = EmptyForm()
+        plots = check_sports()
+        all = all_activities()
+        today = datetime.datetime.now()
+        year = today.year
+        navbar = True
+        return render_template(
+            "index.html",
+            title="All activities",
+            page="index",
+            form=form,
+            plots=plots,
+            this_year=year,
+            all_graphJSON=all.plots,
+            navbar=navbar,
+        )
+    else:
+        return redirect(url_for("setup.initial_setup"))
+
+
+@bp.route("/edit_credentials", methods=["GET", "POST"])
+def edit_credentials():
     plots = check_sports()
-    all = all_activities()
-    today = datetime.datetime.now()
-    year = today.year
-    return render_template(
-        "index.html",
-        title="All activities",
-        page="index",
-        form=form,
-        plots=plots,
-        this_year = year,
-        all_graphJSON=all.plots,
-    )
+    navbar = True
+    if db.session.query(Access).first():
+        access = Access.query.filter_by(id=1).first()
+        form = EditCredentialsForm()
+        if form.validate_on_submit():
+            access.name = form.name.data
+            access.client_id = form.client_id.data
+            access.client_secret = form.client_secret.data
+            access.refresh_token = form.refresh_token.data
+            db.session.commit()
+            flash(
+                "Credentials Updated!", "success",
+            )
+            return redirect(url_for("main.edit_credentials"))
+        elif request.method == "GET":
+            access = db.session.query(Access).first()
+            form.name.data = access.name
+            form.client_id.data = access.client_id
+            form.client_secret.data = access.client_secret
+            form.refresh_token.data = access.refresh_token
+
+        return render_template(
+            "edit_credentials.html",
+            title="Update credentials",
+            form=form,
+            plots=plots,
+            navbar=navbar,
+        )
+    else:
+        return redirect(url_for("setup.initial_setup"))
 
 
 @bp.route("/activity/<name>")
@@ -44,9 +77,15 @@ def activity(name):
     form = EmptyForm()
     activity = single_activity(name)
     plots = check_sports()
+    navbar = True
 
     return render_template(
-        "activity_page.html", form=form, graphJSON=activity.plots, plots=plots
+        "activity_page.html",
+        form=form,
+        graphJSON=activity.plots,
+        plots=plots,
+        activity_name=name,
+        navbar=navbar,
     )
 
 

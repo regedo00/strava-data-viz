@@ -1,6 +1,17 @@
 from app import db
 
 
+class Access(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120))
+    client_id = db.Column(db.String(120), index=True)
+    client_secret = db.Column(db.String(128))
+    refresh_token = db.Column(db.String(128))
+
+    def __repr__(self):
+        return "<User {}>".format(self.name)
+
+
 class Activity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))

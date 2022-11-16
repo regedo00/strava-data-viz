@@ -56,6 +56,10 @@ def create_app(config_class=Config):
 
     app.register_blueprint(errors_bp)
 
+    from app.setup import bp as setup_bp
+
+    app.register_blueprint(setup_bp, url_prefix="/setup")
+
     from app.main import bp as main_bp
 
     app.register_blueprint(main_bp)

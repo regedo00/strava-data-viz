@@ -232,6 +232,7 @@ class single_activity:
     def __init__(self, activity_name):
         self.name = activity_name
         self.data = db_data_into_df()
+        self.palette = create_color_palette()
         self.plots = self.create_activity_chart()
 
     def create_activity_chart(self):
@@ -248,6 +249,7 @@ class single_activity:
                 x=self.activity_df.start_date,
                 y=self.activity_df.average_speed,
                 mode="markers",
+                marker_color=self.palette[self.name],
             )
         )
         self.fig1.update_xaxes(rangeslider_visible=True)
@@ -266,6 +268,7 @@ class single_activity:
                 name=self.name,
                 x=self.activity_df_yearly.start_date,
                 y=self.activity_df_yearly.distance,
+                marker_color=self.palette[self.name],
                 visible=True,
             )
         )

@@ -5,7 +5,7 @@
         {{ form.hidden_tag() }}
         {{ form.submit(value='Retrieve data',class="button btn-custom") }}
     </form>
-  </div> 
+  </div>
   </div>
   <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
     <span aria-hidden="true"></span>
@@ -17,9 +17,6 @@
       <div class="navbar-item">
         <a href="{{ url_for('main.index') }}">Home</a>
       </div>
-      <div class="navbar-item">
-        <p><b>|</b></p>
-      </div>
       {% for plot in plots %}
           <div class="navbar-item">
               <a href="{{ url_for('main.activity', name= plot) }}">
@@ -27,6 +24,9 @@
           </a>
           </div>
             {% endfor %}
+            <div class="navbar-item">
+              <a href="{{ url_for('main.edit_credentials') }}">Settings</a>
+            </div>
     </div>
   </div>
 </nav>

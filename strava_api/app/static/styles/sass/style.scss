@@ -76,6 +76,10 @@ html {
     border: 5px solid $secondary-color;
 }
 
+.notification {
+    border-radius: 0px;
+}
+
 .main-col {
     border-left: 3px solid $font-color;
     border-right: 3px solid $font-color;
@@ -96,4 +100,30 @@ h1 {
 .plot-box {
     border: 2px solid $font-color;
     box-shadow: 10px 7px $medium-color;
+}
+
+.activity-title {
+    color: $secondary-color;
+}
+
+.box {
+    border-radius: 0px;
+    border: 2px solid $font-color;
+    box-shadow: 10px 7px $medium-color;
+}
+
+.input-div {
+    width: 70%;
+}
+
+.input {
+    border-radius: 0px;
+    border: 2px solid $font-color;
+}
+
+.input-label {
+    background-color: $font-color;
+    color: $light-color;
+    font-weight: 500;
+
 }
