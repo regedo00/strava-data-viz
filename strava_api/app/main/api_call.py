@@ -13,6 +13,24 @@ from app.main.parse_data import parse_strava_data
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
+def test_api_connection(client_id, client_secret, refresh_token):
+    auth_url = current_app.config["AUTH_URL"]
+    payload = {
+        "client_id": client_id,
+        "client_secret": client_secret,
+        "refresh_token": refresh_token,
+        "grant_type": "refresh_token",
+        "f": "json",
+    }
+
+    res = requests.post(auth_url, data=payload, verify=False)
+
+    if res.status_code == 200:
+        return True
+    else:
+        return False
+
+
 def get_data(after):
     auth_url = current_app.config["AUTH_URL"]
     access = db.session.query(Access).first()

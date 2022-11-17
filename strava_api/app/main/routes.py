@@ -22,15 +22,16 @@ def index():
         all = all_activities()
         today = datetime.datetime.now()
         year = today.year
+        page = "index"
         navbar = True
         return render_template(
             "index.html",
             title="All activities",
-            page="index",
             form=form,
             plots=plots,
             this_year=year,
             all_graphJSON=all.plots,
+            page=page,
             navbar=navbar,
         )
     else:
@@ -40,6 +41,7 @@ def index():
 @bp.route("/edit_credentials", methods=["GET", "POST"])
 def edit_credentials():
     plots = check_sports()
+    page = "settings"
     navbar = True
     if db.session.query(Access).first():
         access = Access.query.filter_by(id=1).first()
@@ -51,7 +53,8 @@ def edit_credentials():
             access.refresh_token = form.refresh_token.data
             db.session.commit()
             flash(
-                "Credentials Updated!", "success",
+                "Credentials Updated!",
+                "success",
             )
             return redirect(url_for("main.edit_credentials"))
         elif request.method == "GET":
@@ -66,6 +69,7 @@ def edit_credentials():
             title="Update credentials",
             form=form,
             plots=plots,
+            page=page,
             navbar=navbar,
         )
     else:
@@ -78,6 +82,7 @@ def activity(name):
     activity = single_activity(name)
     plots = check_sports()
     navbar = True
+    page = name
 
     return render_template(
         "activity_page.html",
@@ -85,6 +90,7 @@ def activity(name):
         graphJSON=activity.plots,
         plots=plots,
         activity_name=name,
+        page=page,
         navbar=navbar,
     )
 

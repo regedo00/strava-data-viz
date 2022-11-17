@@ -1,4 +1,4 @@
-from flask import current_app
+from flask import current_app, flash
 from sqlalchemy.sql import text
 import pandas as pd
 import plotly
@@ -12,13 +12,17 @@ from app import db
 
 
 def db_data_into_df():
-    sql = """SELECT * FROM activity;"""
-    with db.engine.connect().execution_options(autocommit=True) as conn:
-        query = conn.execute(text(sql))
-        activity_df = pd.DataFrame(query.fetchall())
-        activity_df["start_date"] = pd.to_datetime(activity_df["start_date"])
-
-    return activity_df
+    try:
+        sql = """SELECT * FROM activity;"""
+        with db.engine.connect().execution_options(autocommit=True) as conn:
+            query = conn.execute(text(sql))
+            activity_df = pd.DataFrame(query.fetchall())
+            activity_df["start_date"] = pd.to_datetime(activity_df["start_date"])
+            return activity_df
+    except KeyError as e:
+        if e.args[0] == "start_date":
+            flash("Ops, something is wrong. Chek your credentials!", "error")
+            pass
 
 
 def check_sports():
@@ -100,8 +104,8 @@ class all_activities:
                     type="buttons",
                     direction="right",
                     active=0,
-                    x=0.4,
-                    y=1.3,
+                    x=0.65,
+                    y=-0.7,
                     buttons=list(
                         [
                             dict(
@@ -126,7 +130,9 @@ class all_activities:
                                             False,
                                         ]
                                     },
-                                    {"title": "Yearly <b>Distance</b>",},
+                                    {
+                                        "title": "Yearly <b>Distance</b>",
+                                    },
                                 ],
                             ),
                             dict(
@@ -151,7 +157,9 @@ class all_activities:
                                             True,
                                         ]
                                     },
-                                    {"title": "Monthly <b>Distance</b>",},
+                                    {
+                                        "title": "Monthly <b>Distance</b>",
+                                    },
                                 ],
                             ),
                         ]
@@ -234,6 +242,7 @@ class single_activity:
         self.data = db_data_into_df()
         self.palette = create_color_palette()
         self.plots = self.create_activity_chart()
+        self.stats = self.create_activity_stats()
 
     def create_activity_chart(self):
         self.activity_df = self.data[
@@ -261,16 +270,31 @@ class single_activity:
         ).sum()
         self.activity_df_yearly = self.activity_df_yearly.reset_index(level=[0, 1])
 
-        self.fig2 = go.Figure()
+        self.activity_df_yearly_count = self.activity_df.groupby(
+            [self.activity_df.start_date.dt.year]
+        ).count()
+
+        self.fig2 = make_subplots(specs=[[{"secondary_y": True}]])
 
         self.fig2.add_trace(
             go.Bar(
-                name=self.name,
+                name="Distance",
                 x=self.activity_df_yearly.start_date,
                 y=self.activity_df_yearly.distance,
                 marker_color=self.palette[self.name],
                 visible=True,
-            )
+            ),
+            secondary_y=False,
+        )
+
+        self.fig2.add_trace(
+            go.Scatter(
+                name="Activities",
+                x=self.activity_df_yearly_count.index,
+                y=self.activity_df_yearly_count.distance,
+                visible=True,
+            ),
+            secondary_y=True,
         )
 
         self.fig2.update_xaxes(rangeslider_visible=True)
@@ -281,3 +305,18 @@ class single_activity:
 
         self.graphJSON = [self.pace_graphJSON, self.distance_graphJSON]
         return self.graphJSON
+
+    def create_activity_stats(self):
+        self.activity_df = self.data[
+            [
+                "start_date",
+                "type",
+                "average_speed",
+                "distance",
+                "moving_time",
+                "total_elevation_gain",
+                "average_speed",
+            ]
+        ]
+        self.activity_df["start_date"] = pd.to_datetime(self.activity_df["start_date"])
+        self.activity_df = self.activity_df[self.activity_df["type"] == self.name]

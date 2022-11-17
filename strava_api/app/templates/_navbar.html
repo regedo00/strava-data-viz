@@ -14,17 +14,20 @@
   </a>
   <div class="navbar-menu" id="navMenu">
     <div class="navbar-end">
-      <div class="navbar-item">
+      <div {% if page=="index" %} class="navbar-item navlik-is-active" {% else %} class="navbar-item" {% endif
+        %}>
         <a href="{{ url_for('main.index') }}">Home</a>
       </div>
       {% for plot in plots %}
-          <div class="navbar-item">
+          <div {% if page==plot %} class="navbar-item navlik-is-active" {% else %} class="navbar-item" {% endif
+            %}>
               <a href="{{ url_for('main.activity', name= plot) }}">
               {{ plot }}
           </a>
           </div>
             {% endfor %}
-            <div class="navbar-item">
+            <div {% if page=="settings" %} class="navbar-item navlik-is-active" {% else %} class="navbar-item" {% endif
+              %}>
               <a href="{{ url_for('main.edit_credentials') }}">Settings</a>
             </div>
     </div>
