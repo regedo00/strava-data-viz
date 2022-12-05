@@ -1,6 +1,6 @@
 FROM python:3
 LABEL author="Edo Reggiani"
-LABEL version="10.1" 
+LABEL version="0.1" 
 
 # set work directory
 WORKDIR /usr/src/strava_api

@@ -10,7 +10,7 @@
     <h1 class="pb-4">
         <b>Update Credentials</b>
     </h1>
-    <form action="" method="post">
+    <form action="{{ url_for('main.edit_credentials') }}" method="post">
         {{ form.hidden_tag() }}
         <div class="pb-4 input-div">
             <p class="pb-2 input-label">{{ form.name.label }}</p>
@@ -42,12 +42,35 @@
             
         </div>
         <p>{{ form.submit(class="button btn-custom") }}</p>
-
     </form>
+        <hr>
+        <div>
+            <button class="js-modal-trigger btn-custom" data-target="flush-modal">
+                Flush all data
+              </button>
+        </div>
+        <div id="flush-modal" class="modal">
+            <div class="modal-background"></div>
+            <div class="modal-content">
+              <div class="box">
+                <p>Are you really sure?</p>
+                <div>
+                    <form action="{{ url_for('main.flush_data') }}" method="post">
+                    {{ form_delete.hidden_tag() }}
+                    {{ form_delete.flush(class="button btn-custom") }}
+                </form>
+                </div>
+              </div>
+            </div>
+            <button class="modal-close is-large" aria-label="close"></button>
+          </div>
 </div>
 </div>
 </div>
 </section>
 </div>
 </div>
+{% endblock %}
+{% block scripts %}
+<script src="{{url_for('static', filename='js/modals.js')}}"></script>
 {% endblock %}

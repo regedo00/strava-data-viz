@@ -47,20 +47,29 @@ def get_data(after):
 
     res = requests.post(auth_url, data=payload, verify=False)
     try:
+        request_page_num = 1
         access_token = res.json()["access_token"]
         activities_url = current_app.config["ACTIVITIES_URL"]
         header = {"Authorization": f"Bearer {access_token}"}
-        param = {
-            "per_page": current_app.config["RECORD_PER_PAGE"],
-            "page": 1,
-            "after": after,
-        }
+        total_activities = []
 
-        data = requests.get(activities_url, headers=header, params=param).json()
+        while True:
+            param = {
+                "per_page": current_app.config["RECORD_PER_PAGE"],
+                "page": request_page_num,
+                "after": after,
+            }
+            data = requests.get(activities_url, headers=header, params=param).json()
+            total_activities.append(len(data))
+            df = parse_strava_data(data)
+            df.to_sql("activity", db.engine, if_exists="append", index=False)
 
-        df = parse_strava_data(data)
+            request_page_num += 1
 
-        df.to_sql("activity", db.engine, if_exists="append", index=False)
+            if len(data) == 0:
+                if sum(total_activities) > 0:
+                    flash(f"Imported {sum(total_activities)} activities", "success")
+                break
 
     except KeyError as e:
         if e.args[0] == "access_token":
@@ -70,7 +79,9 @@ def get_data(after):
 
 def check_if_data():
     if db.session.query(Activity).first():
-        pass
+        last_activity = db.session.query(Activity).order_by(Activity.id.desc()).first()
+        last_activity_date_epoc = calendar.timegm(last_activity.start_date.timetuple())
+        get_data(last_activity_date_epoc)
     else:
         start_date = datetime(1971, 1, 1, 0, 0, 0)
         start_date_epoc = calendar.timegm(start_date.timetuple())

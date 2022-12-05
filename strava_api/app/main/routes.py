@@ -4,11 +4,11 @@ import datetime
 
 
 from app import db
-from app.models import Access, Activity
+from app.models import Access, Activity, Sport
 from app.main import bp
-from app.main.api_call import get_data, check_if_data
+from app.main.api_call import check_if_data
 
-from app.main.forms import EmptyForm, EditCredentialsForm
+from app.main.forms import EmptyForm, EditCredentialsForm, FlushForm
 from app.main.plot import check_sports, all_activities, single_activity
 
 
@@ -38,42 +38,85 @@ def index():
         return redirect(url_for("setup.initial_setup"))
 
 
-@bp.route("/edit_credentials", methods=["GET", "POST"])
-def edit_credentials():
+@bp.route("/settings")
+def settings():
     plots = check_sports()
-    page = "settings"
+    page = "Settings"
     navbar = True
     if db.session.query(Access).first():
-        access = Access.query.filter_by(id=1).first()
-        form = EditCredentialsForm()
-        if form.validate_on_submit():
-            access.name = form.name.data
-            access.client_id = form.client_id.data
-            access.client_secret = form.client_secret.data
-            access.refresh_token = form.refresh_token.data
-            db.session.commit()
-            flash(
-                "Credentials Updated!",
-                "success",
-            )
-            return redirect(url_for("main.edit_credentials"))
-        elif request.method == "GET":
+
+        if request.method == "GET":
+            access = Access.query.filter_by(id=1).first()
+            form = EditCredentialsForm()
+            form_delete = FlushForm()
             access = db.session.query(Access).first()
             form.name.data = access.name
             form.client_id.data = access.client_id
             form.client_secret.data = access.client_secret
             form.refresh_token.data = access.refresh_token
 
-        return render_template(
-            "edit_credentials.html",
-            title="Update credentials",
-            form=form,
-            plots=plots,
-            page=page,
-            navbar=navbar,
-        )
+            return render_template(
+                "settings.html",
+                title="Update credentials",
+                plots=plots,
+                page=page,
+                navbar=navbar,
+                form=form,
+                form_delete=form_delete,
+            )
     else:
         return redirect(url_for("setup.initial_setup"))
+
+
+@bp.route("/edit_credentials", methods=["POST"])
+def edit_credentials():
+    plots = check_sports()
+    page = "Settings"
+    navbar = True
+    access = Access.query.filter_by(id=1).first()
+    form = EditCredentialsForm()
+    if form.validate_on_submit():
+        access.name = form.name.data
+        access.client_id = form.client_id.data
+        access.client_secret = form.client_secret.data
+        access.refresh_token = form.refresh_token.data
+        db.session.commit()
+        flash(
+            "Credentials Updated!", "success",
+        )
+        return redirect(url_for("main.settings"))
+    return render_template(
+        "settings.html",
+        title="Update credentials",
+        plots=plots,
+        page=page,
+        navbar=navbar,
+        form=form,
+    )
+
+
+@bp.route("/flush_data", methods=["POST"])
+def flush_data():
+    plots = check_sports()
+    page = "Settings"
+    navbar = True
+    form_delete = FlushForm()
+    if form_delete.validate_on_submit():
+        try:
+            Activity.query.delete()
+            db.session.commit()
+            flash("Data flushed!", "success")
+        except:
+            db.session.rollback()
+        return redirect(url_for("main.settings"))
+    return render_template(
+        "settings.html",
+        title="Update credentials",
+        plots=plots,
+        page=page,
+        navbar=navbar,
+        form_delete=form_delete,
+    )
 
 
 @bp.route("/activity/<name>")
@@ -93,18 +136,6 @@ def activity(name):
         page=page,
         navbar=navbar,
     )
-
-
-@bp.route("/retrieve", methods=["POST"])
-def retrieve():
-    form = EmptyForm()
-    if form.validate_on_submit():
-        last_activity = db.session.query(Activity).order_by(Activity.id.desc()).first()
-        last_activity_date_epoc = calendar.timegm(last_activity.start_date.timetuple())
-        get_data(last_activity_date_epoc)
-        return redirect(url_for("main.index"))
-    else:
-        return redirect(url_for("main.index"))
 
 
 @bp.route("/show-table")

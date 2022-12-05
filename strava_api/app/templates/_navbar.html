@@ -1,10 +1,7 @@
 <nav class="navbar px-5 py-3" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
     <div class="navbar-item">
-      <form action="{{ url_for('main.retrieve') }}" method="post">
-        {{ form.hidden_tag() }}
-        {{ form.submit(value='Retrieve data',class="button btn-custom") }}
-    </form>
+      <a href="{{ url_for('main.index') }}"><h2><b>Simple Strava Dashboard</b></h2></a>
   </div>
   </div>
   <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
@@ -28,7 +25,7 @@
             {% endfor %}
             <div {% if page=="settings" %} class="navbar-item navlik-is-active" {% else %} class="navbar-item" {% endif
               %}>
-              <a href="{{ url_for('main.edit_credentials') }}">Settings</a>
+              <a href="{{ url_for('main.settings') }}">Settings</a>
             </div>
     </div>
   </div>

@@ -13,7 +13,6 @@ configparser
 pyyaml
 loguru
 openpyxl
-beautifulsoup4
 Flask-WTF
 Flask-Session
 flask-migrate
@@ -27,3 +26,4 @@ python-dotenv
 flask-admin
 flask-security
 libsass
+wtforms-sqlalchemy

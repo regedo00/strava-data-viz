@@ -9,6 +9,7 @@ import datetime
 
 
 from app import db
+from app.models import Sport
 
 
 def db_data_into_df():
@@ -21,19 +22,25 @@ def db_data_into_df():
             return activity_df
     except KeyError as e:
         if e.args[0] == "start_date":
-            flash("Ops, something is wrong. Chek your credentials!", "error")
+            flash("Ops, database is empty! Go to homepage to fetch data!", "error")
             pass
 
 
 def check_sports():
-    df = db_data_into_df()
-    check = []
-    for sport in df["type"].unique():
-        check.append(sport)
-    plots = current_app.config["PLOTS"][1:]
-    sc = set(check)
-    sp = set(plots)
-    plots = list(sp.intersection(sc))
+    try:
+        df = db_data_into_df()
+        check = []
+        for sport in df["type"].unique():
+            check.append(sport)
+        plots = []
+        sport_query = Sport.query.filter_by(checked=True).all()
+        for sport in sport_query:
+            plots.append(sport.name)
+        sc = set(check)
+        sp = set(plots)
+        plots = list(sp.intersection(sc))
+    except TypeError:
+        plots = []
     return plots
 
 
@@ -173,6 +180,8 @@ class all_activities:
             legend=dict(
                 orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1
             ),
+            xaxis_title="Year",
+            yaxis_title="Km",
         )
 
         self.fig.update_xaxes(rangeslider_visible=True)
@@ -261,6 +270,15 @@ class single_activity:
                 marker_color=self.palette[self.name],
             )
         )
+
+        self.fig1.update_layout(
+            legend=dict(
+                orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1
+            ),
+            xaxis_title="Year",
+            yaxis_title="Km/h",
+        )
+
         self.fig1.update_xaxes(rangeslider_visible=True)
 
         self.pace_graphJSON = json.dumps(self.fig1, cls=plotly.utils.PlotlyJSONEncoder)
@@ -296,6 +314,16 @@ class single_activity:
             ),
             secondary_y=True,
         )
+
+        self.fig2.update_layout(
+            legend=dict(
+                orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=0.6
+            ),
+            yaxis_title="Km",
+        )
+
+        self.fig2.update_yaxes(title_text="Km", secondary_y=False)
+        self.fig2.update_yaxes(title_text="N°", secondary_y=True)
 
         self.fig2.update_xaxes(rangeslider_visible=True)
 

@@ -1,3 +1,7 @@
-## My Strava Activities
+## A Simple Strava Dashboard
 
-A work-in-progress dockerized Flask app to visualize data from Strava.
+A simple dashboard built with Flask and Plotly that allows you to easily visualize your Strava activities. Follow Follow the [Getting started guide](https://developers.strava.com/docs/getting-started/) to quickly set up the Strava API, and then run the "run_docker.sh" script to launch the container and begin exploring your data. 
+
+&nbsp;
+
+Note: This project is still in development, so any suggestions are greatly appreciated. 

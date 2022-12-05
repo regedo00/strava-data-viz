@@ -1,5 +1,7 @@
-<div id="distance-chart" class="chart"></div>
+<div id="distance-chart" class="chart" style="width: 100%; height: 100%;"></div>
 <script type="text/javascript">
     var graphs = {{ all_graphJSON[0] | safe }};
-    Plotly.newPlot('distance-chart',graphs,{});
-  </script>
+    Plotly.newPlot('distance-chart',graphs,{
+        responsive: true
+    });
+</script>

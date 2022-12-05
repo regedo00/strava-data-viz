@@ -12,6 +12,15 @@ class Access(db.Model):
         return "<User {}>".format(self.name)
 
 
+class Sport(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50))
+    checked = db.Column(db.Boolean, default=False, nullable=False)
+
+    def __repr__(self):
+        return "<Sport checked {}>".format(self.checked)
+
+
 class Activity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))

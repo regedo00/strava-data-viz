@@ -35,6 +35,13 @@
                             {% endfor %}
                             
                         </div>
+                        <div class="pb-4">
+                            {{ form.sports }}<br>
+                            {% for error in form.sports.errors %}
+                            <div class="notification is-danger is-light" role="alert">{{ error }}</div>
+                            {% endfor %}
+                            
+                        </div>
                         <p>{{ form.submit(class="button btn-custom") }}</p>
                     </form>
                 </div>
