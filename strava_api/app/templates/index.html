@@ -3,13 +3,36 @@
 <div class="columns">
   <div class="column">
     <div class="plot-box-container">
-      <div class="has-text-centered ">
+      <div class="has-text-centered">
         <p class="section-titles"><b>{{ this_year }}</b> activities </p>
       </div>
         <div class="plot-box">
         {% include "_all_activities_piechart.html" %}
         <hr>
-    </div>
+        <div class="plot-box-container has-text-centered">
+        <div class="plot-box-slim">
+          <p class="sub-section-titles px-5">YoY compare at <b>{{ today_str }}</b></p>
+            <table class="table is-striped is-hoverable mx-auto">
+              <thead>
+                <tr>
+                  <th>Activity</th>
+                  <th>Distance (Km)</th>
+                  <th>Activity</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for k, v in comparables['distance'].items() %}
+                  <tr>
+                    <td>{{ k }}</td>
+                    <td><p class="{{ 'red' if comparables['distance'][k] < 0 else 'green' }}"><b>{{ comparables['distance'][k] |round }}</b></p></td>
+                    <td><p class="{{ 'red' if comparables['occurrencies'][k] < 0 else 'green' }}"><b>{{ comparables['occurrencies'][k] |round }}</b></p></td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="plot-box-container">
       <div class="has-text-centered	section-titles">

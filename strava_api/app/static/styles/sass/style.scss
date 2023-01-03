@@ -15,7 +15,7 @@ $medium-color: #817f7f;
 $secondary-color: #FC5200;
 $h1: 2rem;
 $h2: 1.5rem;
-$h3: 1rem;
+$h3: 1.25rem;
 
 html {
     background-color: $secondary-color;
@@ -63,7 +63,6 @@ html {
     background-color: $light-color;
     border: 5px solid $secondary-color;
     box-shadow: 10px 5px $medium-color;
-
 }
 
 .btn-custom a {
@@ -83,7 +82,6 @@ html {
 .main-col {
     border-left: 3px solid $font-color;
     border-right: 3px solid $font-color;
-
 }
 
 h1 {
@@ -95,6 +93,15 @@ h1 {
     font-size: $h2;
     color: $light-color;
     display: block;
+}
+
+.sub-section-titles {
+    background-color: $font-color;
+    color: $light-color;
+    border-top: 2px solid $font-color;
+    font-size: $h3;
+    display: block;
+
 }
 
 .plot-box-container {
@@ -109,10 +116,17 @@ h1 {
     }
 }
 
-
 .plot-box {
     border: 2px solid $font-color;
     box-shadow: 10px 7px $medium-color;
+}
+
+.plot-box-slim {
+    border: 2px solid $font-color;
+    border-top: 0px;
+    box-shadow: 10px 7px $medium-color;
+    display: inline-block;
+    margin: auto;
 }
 
 .activity-title {
@@ -142,4 +156,22 @@ h1 {
 
 .navlik-is-active a {
     color: $secondary-color !important;
+}
+
+.chart-container {
+    position: relative;
+    margin: auto;
+}
+
+.red {
+    color: red;
+}
+
+.green {
+    color: green;
+}
+
+.green::before {
+    color: green;
+    content: '+ ';
 }

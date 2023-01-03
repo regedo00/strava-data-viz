@@ -51,13 +51,54 @@ def create_color_palette():
     return palette
 
 
+def compare_dicts(dict1, dict2):
+    set1 = set(dict1.keys())
+    set2 = set(dict2.keys())
+    missing_keys1 = set2 - set1
+    missing_keys2 = set1 - set2
+    for key in missing_keys1:
+        dict1[key] = {k: 0 for k in dict2[key].keys()}
+    for key in missing_keys2:
+        dict2[key] = {k: 0 for k in dict1[key].keys()}
+
+    for key in dict1.keys():
+        inner_set1 = set(dict1[key].keys())
+    for key in dict2.keys():
+        inner_set2 = set(dict2[key].keys())
+
+    inner_missing_keys1 = inner_set2 - inner_set1
+    inner_missing_keys2 = inner_set1 - inner_set2
+
+    for key in dict1.keys():
+        for inner_key in inner_missing_keys1:
+            dict1[key][inner_key] = 0
+    for key in dict2.keys():
+        for inner_key in inner_missing_keys2:
+            dict2[key][inner_key] = 0
+
+    return dict1, dict2
+
+
+def subtract_dicts(dict1, dict2):
+    result = {}
+    for key in dict1.keys():
+        if key not in ["start_date", "average_speed_x", "average_speed_y"]:
+            result[key] = {
+                k: round(dict1[key][k], 1) - round(dict2[key][k], 1)
+                for k in dict1[key].keys()
+            }
+    return result
+
+
 class all_activities:
     def __init__(self):
         self.data = db_data_into_df()
         self.palette = create_color_palette()
         self.plots = self.create_all_activities_chart()
+        self.comparables = self.create_comparables()
 
     def create_all_activities_chart(self):
+
         self.plottable = self.data[["start_date", "distance", "type", "average_speed"]]
         self.plottable_yearly = self.plottable.groupby(
             [self.plottable.start_date.dt.year, self.plottable.type]
@@ -192,6 +233,7 @@ class all_activities:
 
         today = datetime.datetime.now()
         year = today.year
+
         self.this_year_df = self.plottable.copy()
         self.this_year_df["start_date"] = pd.to_datetime(
             self.this_year_df["start_date"]
@@ -243,6 +285,53 @@ class all_activities:
 
         self.graphJSON = [self.distance_graphJSON, self.current_year_graphJSON]
         return self.graphJSON
+
+    def create_comparables(self):
+
+        today = datetime.datetime.now()
+        year = today.year
+        month = today.month
+        day = today.day
+        last_year_end = datetime.datetime((year - 1), month, day)
+        last_year_begin = datetime.datetime((year - 1), 1, 1)
+
+        self.this_year = self.this_year_sum.merge(
+            self.this_year_count, how="left", left_on="type", right_on="type"
+        )
+        self.this_year = self.this_year.rename(
+            {"distance_x": "distance", "distance_y": "occurrencies"}, axis="columns"
+        )
+
+        self.this_year_dict = self.this_year.to_dict()
+
+        self.last_year_df = self.plottable.copy()
+        self.last_year_df["start_date"] = pd.to_datetime(
+            self.last_year_df["start_date"]
+        )
+        self.last_year_df["start_date"] = self.last_year_df["start_date"].apply(
+            lambda t: t.replace(tzinfo=None)
+        )
+        self.last_year_df = self.last_year_df[
+            (self.last_year_df["start_date"] <= last_year_end)
+            & (self.last_year_df["start_date"] >= last_year_begin)
+        ]
+
+        self.last_year_sum = self.last_year_df.groupby("type").sum()
+        self.last_year_count = self.last_year_df.groupby("type").count()
+
+        self.last_year = self.last_year_sum.merge(
+            self.last_year_count, how="left", left_on="type", right_on="type"
+        )
+        self.last_year = self.last_year.rename(
+            {"distance_x": "distance", "distance_y": "occurrencies"}, axis="columns"
+        )
+
+        self.last_year_dict = self.last_year.to_dict()
+
+        self.compare = compare_dicts(self.last_year_dict, self.this_year_dict)
+        self.result = subtract_dicts(self.this_year_dict, self.last_year_dict)
+
+        return self.result
 
 
 class single_activity:

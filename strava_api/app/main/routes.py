@@ -1,5 +1,4 @@
 from flask import render_template, url_for, request, redirect, flash
-import calendar
 import datetime
 
 
@@ -21,6 +20,7 @@ def index():
         plots = check_sports()
         all = all_activities()
         today = datetime.datetime.now()
+        today_str = today.strftime("%m/%d/%Y")
         year = today.year
         page = "index"
         navbar = True
@@ -31,8 +31,10 @@ def index():
             plots=plots,
             this_year=year,
             all_graphJSON=all.plots,
+            comparables=all.comparables,
             page=page,
             navbar=navbar,
+            today_str=today_str,
         )
     else:
         return redirect(url_for("setup.initial_setup"))
