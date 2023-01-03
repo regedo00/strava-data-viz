@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="columns is-mobile">
+<div class="columns">
     <div class="column">
         <section class="hero is-fullheight">
             <div class="hero-body has-text-centered">
@@ -12,28 +12,28 @@
     </h1>
     <form action="{{ url_for('main.edit_credentials') }}" method="post">
         {{ form.hidden_tag() }}
-        <div class="pb-4 input-div">
+        <div class="pb-4 input-div mx-auto">
             <p class="pb-2 input-label">{{ form.name.label }}</p>
             <p>{{ form.name(size=32, class="input is-normal") }}</p>
             {% for error in form.name.errors %}
             <div class="notification is-danger is-light" role="alert">{{ error }}</div>
             {% endfor %}
         </div>
-        <div class="pb-4 input-div">
+        <div class="pb-4 input-div mx-auto">
             <p class="pb-2 input-label">{{ form.client_id.label }}</p>
             {{ form.client_id(size=32, class="input is-normal") }}<br>
             {% for error in form.client_id.errors %}
             <div class="notification is-danger is-light" role="alert">{{ error }}</div>
             {% endfor %}
         </div>
-        <div class="pb-4 input-div">
+        <div class="pb-4 input-div mx-auto">
             <p class="pb-2 input-label">{{ form.client_secret.label }}</p>
             {{ form.client_secret(class="input is-normal") }}<br>
             {% for error in form.client_secret.errors %}
             <div class="notification is-danger is-light" role="alert">{{ error }}</div>
             {% endfor %}
         </div>
-        <div class="pb-4 input-div">
+        <div class="pb-4 input-div mx-auto">
             <p class="pb-2 input-label">{{ form.refresh_token.label }}</p>
             {{ form.refresh_token(class="input is-normal") }}<br>
             {% for error in form.refresh_token.errors %}
@@ -41,11 +41,11 @@
             {% endfor %}
             
         </div>
-        <p>{{ form.submit(class="button btn-custom") }}</p>
+        <p>{{ form.submit(class="button btn-custom mx-auto") }}</p>
     </form>
         <hr>
         <div>
-            <button class="js-modal-trigger btn-custom" data-target="flush-modal">
+            <button class="js-modal-trigger btn-custom mx-auto" data-target="flush-modal">
                 Flush all data
               </button>
         </div>

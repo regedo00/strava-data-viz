@@ -1,16 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="columns is-mobile">
+<div class="columns">
   <div class="column">
-    <div class="p-5 m-5">
+    <div class="plot-box-container">
       <div class="has-text-centered ">
         <p class="section-titles"><b>{{ this_year }}</b> activities </p>
       </div>
         <div class="plot-box">
         {% include "_all_activities_piechart.html" %}
-      </div>
+        <hr>
     </div>
-    <div class="p-5 m-5">
+    </div>
+    <div class="plot-box-container">
       <div class="has-text-centered	section-titles">
         <p>Distance</p>
       </div>
@@ -18,7 +19,7 @@
       {% include "_all_activities_barchart.html" %}
     </div>
     </div>
-            <div class="p-5 m-5">
+            <div class="plot-box-container">
               <div class="has-text-centered	section-titles">
                 <p>All activities</p>
               </div>

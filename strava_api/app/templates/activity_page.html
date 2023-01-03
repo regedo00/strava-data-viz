@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="columns is-mobile">
+<div class="columns">
   <div class="column">
     <div class="has-text-centered">
       <h1 class="activity-title">{{ activity_name }}</h1>
     </div>
-    <div class="p-5 m-5">
+    <div class="plot-box-container">
       <div class="has-text-centered">
         <p class="section-titles"> Distance </p>
       </div>
@@ -13,7 +13,7 @@
         {% include "_distancechart.html" %}
       </div>
     </div>
-    <div class="p-5 m-5">
+    <div class="plot-box-container">
       <div class="has-text-centered">
         <p class="section-titles"> Pace distribution </p>
       </div>

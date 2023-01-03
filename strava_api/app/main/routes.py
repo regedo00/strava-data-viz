@@ -141,7 +141,6 @@ def activity(name):
 @bp.route("/show-table")
 def data():
     query = Activity.query
-
     search = request.args.get("search[value]")
     if search:
         query = query.filter(
@@ -149,7 +148,6 @@ def data():
         )
 
     total_filtered = query.count()
-
     order = []
     i = 0
     while True:
