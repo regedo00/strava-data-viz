@@ -100,18 +100,22 @@ class all_activities:
     def create_all_activities_chart(self):
 
         self.plottable = self.data[["start_date", "distance", "type", "average_speed"]]
+
+        # Group by year and type, summing only numerical columns
         self.plottable_yearly = self.plottable.groupby(
             [self.plottable.start_date.dt.year, self.plottable.type]
-        ).sum()
+        ).sum(numeric_only=True)
         self.plottable_yearly = self.plottable_yearly.reset_index(level=[0, 1])
 
         self.plottable_monthly = self.plottable.copy()
         self.plottable_monthly.index = pd.to_datetime(
             self.plottable_monthly["start_date"]
         )
+
+        # Group by month and type, summing only numerical columns
         self.plottable_monthly = self.plottable_monthly.groupby(
             [pd.Grouper(freq="M"), self.plottable_monthly.type]
-        ).sum()
+        ).sum(numeric_only=True)
         self.plottable_monthly = self.plottable_monthly.reset_index(level=[0, 1])
 
         self.fig = go.Figure()
@@ -184,7 +188,7 @@ class all_activities:
                                 ],
                             ),
                             dict(
-                                label="Monhtly Distance",
+                                label="Monthly Distance",
                                 method="update",
                                 args=[
                                     {
@@ -241,7 +245,7 @@ class all_activities:
         self.this_year_df = self.this_year_df[
             self.this_year_df["start_date"].dt.year == year
         ]
-        self.this_year_sum = self.this_year_df.groupby("type").sum()
+        self.this_year_sum = self.this_year_df.groupby("type").sum(numeric_only=True)
         self.this_year_count = self.this_year_df.groupby("type").count()
 
         self.fig1 = make_subplots(
@@ -316,7 +320,7 @@ class all_activities:
             & (self.last_year_df["start_date"] >= last_year_begin)
         ]
 
-        self.last_year_sum = self.last_year_df.groupby("type").sum()
+        self.last_year_sum = self.last_year_df.groupby("type").sum(numeric_only=True)
         self.last_year_count = self.last_year_df.groupby("type").count()
 
         self.last_year = self.last_year_sum.merge(
@@ -374,7 +378,7 @@ class single_activity:
 
         self.activity_df_yearly = self.activity_df.groupby(
             [self.activity_df.start_date.dt.year, self.activity_df.type]
-        ).sum()
+        ).sum(numeric_only=True)
         self.activity_df_yearly = self.activity_df_yearly.reset_index(level=[0, 1])
 
         self.activity_df_yearly_count = self.activity_df.groupby(
