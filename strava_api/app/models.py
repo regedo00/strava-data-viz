@@ -30,6 +30,7 @@ class Activity(db.Model):
     total_elevation_gain = db.Column(db.Float)
     type = db.Column(db.String(100))
     sport_type = db.Column(db.String(100))
+    device_name = db.Column(db.String(100))
     start_date = db.Column(db.DateTime)
     average_speed = db.Column(db.Float)
     max_speed = db.Column(db.Float)
